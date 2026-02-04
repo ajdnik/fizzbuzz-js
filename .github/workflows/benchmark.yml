@@ -61,7 +61,8 @@ jobs:
             echo "## Node.js $version" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
-            cat "$dir/benchmark-output.txt" >> $GITHUB_STEP_SUMMARY
+            # Strip ANSI color codes from output
+            sed 's/\x1b\[[0-9;]*m//g' "$dir/benchmark-output.txt" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           done
