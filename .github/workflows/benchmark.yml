@@ -3,12 +3,10 @@ name: Benchmark
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 jobs:
-  benchmark:
+  benchmark-node:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,7 +26,6 @@ jobs:
         run: npm ci
 
       - name: Run benchmark
-        id: benchmark
         run: |
           echo "Running benchmark on Node.js ${{ matrix.node-version }}"
           node bench.mjs 2>&1 | tee benchmark-output.txt
@@ -39,8 +36,56 @@ jobs:
           name: benchmark-node-${{ matrix.node-version }}
           path: benchmark-output.txt
 
+  benchmark-bun:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run benchmark
+        run: |
+          echo "Running benchmark on Bun $(bun --version)"
+          bun bench.mjs 2>&1 | tee benchmark-output.txt
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-bun
+          path: benchmark-output.txt
+
+  benchmark-deno:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+
+      - name: Install dependencies
+        run: deno install --node-modules-dir=auto
+
+      - name: Run benchmark
+        run: |
+          echo "Running benchmark on Deno $(deno --version | head -1)"
+          deno run --node-modules-dir=auto --allow-read bench.mjs 2>&1 | tee benchmark-output.txt
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-deno
+          path: benchmark-output.txt
+
   summary:
-    needs: benchmark
+    needs: [benchmark-node, benchmark-bun, benchmark-deno]
     runs-on: ubuntu-latest
     
     steps:
@@ -53,7 +98,7 @@ jobs:
         run: |
           echo "# 🏎️ FizzBuzz Benchmark Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Benchmark results across different Node.js versions." >> $GITHUB_STEP_SUMMARY
+          echo "Benchmark results across different runtimes." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           for dir in results/benchmark-node-*; do
@@ -61,8 +106,21 @@ jobs:
             echo "## Node.js $version" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
-            # Strip ANSI color codes from output
             sed 's/\x1b\[[0-9;]*m//g' "$dir/benchmark-output.txt" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           done
+
+          echo "## Bun" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          sed 's/\x1b\[[0-9;]*m//g' "results/benchmark-bun/benchmark-output.txt" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "## Deno" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          sed 's/\x1b\[[0-9;]*m//g' "results/benchmark-deno/benchmark-output.txt" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
