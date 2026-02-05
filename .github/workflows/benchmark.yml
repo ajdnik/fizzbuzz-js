@@ -115,7 +115,7 @@ jobs:
       - name: Run benchmark
         run: |
           echo "Running benchmark on Deno $(deno --version | head -1)"
-          deno run --node-modules-dir=auto --allow-read --allow-env --allow-ffi bench.mjs 2>&1 | grep -vE 'Download https://|Initialize \S+@' | tee benchmark-output.txt
+          deno run --node-modules-dir=auto --allow-read --allow-env --allow-ffi bench.mjs 2>/dev/null | tee benchmark-output.txt
 
       - name: Upload benchmark results
         uses: actions/upload-artifact@v4
