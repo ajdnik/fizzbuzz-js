@@ -7,6 +7,7 @@ import {
   fizzBuzzPreallocated,
   fizzBuzzUnrolled,
   fizzBuzzRecursive,
+  fizzBuzzDSL,
 } from './fizzbuzz.mjs';
 
 const implementations = [
@@ -16,6 +17,7 @@ const implementations = [
   { name: 'Pre-allocated', fn: fizzBuzzPreallocated },
   { name: 'Unrolled', fn: fizzBuzzUnrolled },
   { name: 'Recursive', fn: fizzBuzzRecursive },
+  { name: 'DSL', fn: fizzBuzzDSL },
 ];
 
 for (const { name, fn } of implementations) {

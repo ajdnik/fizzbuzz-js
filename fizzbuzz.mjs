@@ -96,3 +96,27 @@ const _fizzBuzzInternal = (n, current = 1, arr = new Array(n)) => {
 
 export const fizzBuzzRecursive = trampoline(_fizzBuzzInternal);
 
+// 7. Domain-Specific Language
+// The Identity (End of chain)
+const identity = (n, v) => v;
+
+// The Context
+const check = (d, s) => (cont) => (n, v) => {
+  if (n % d === 0) return s + cont(n, "");
+  return cont(n, v);
+};
+
+// The Composition 
+const program = check(3, "Fizz")(
+                  check(5, "Buzz")(
+                    identity
+                  )
+                );
+
+export const fizzBuzzDSL = (N) => {
+  const arr = new Array(N);
+  for (let i = 1; i <= N; i++) {
+    arr[i-1] = program(i, i);
+  }
+  return arr;
+}

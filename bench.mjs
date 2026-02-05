@@ -6,6 +6,7 @@ import {
   fizzBuzzPreallocated,
   fizzBuzzUnrolled,
   fizzBuzzRecursive,
+  fizzBuzzDSL,
 } from './fizzbuzz.mjs';
 
 // Number of elements to process 
@@ -18,6 +19,7 @@ group('FizzBuzz Optimization Race', () => {
   bench('4. Array Pre-allocation', () => fizzBuzzPreallocated(N));
   bench('5. Loop Unrolling', () => fizzBuzzUnrolled(N));
   bench('6. Tail Recursion + Trampolining', () => fizzBuzzRecursive(N));
+  bench('7. Domain-Specific Language', () => fizzBuzzDSL(N));
 });
 
 await run();
