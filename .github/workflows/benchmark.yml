@@ -76,7 +76,7 @@ jobs:
       - name: Run benchmark
         run: |
           echo "Running benchmark on Deno $(deno --version | head -1)"
-          deno run --node-modules-dir=auto --allow-read bench.mjs 2>&1 | tee benchmark-output.txt
+          deno run --node-modules-dir=auto --allow-read --allow-env bench.mjs 2>&1 | tee benchmark-output.txt
 
       - name: Upload benchmark results
         uses: actions/upload-artifact@v4
