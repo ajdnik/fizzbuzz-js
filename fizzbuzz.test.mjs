@@ -4,18 +4,18 @@ import {
   fizzBuzzNaive,
   fizzBuzzLCM,
   fizzBuzzModulo,
-  fizzBuzzPreallocation,
-  fizzBuzzTailRecTrampolined,
+  fizzBuzzPreallocated,
   fizzBuzzUnrolled,
+  fizzBuzzRecursive,
 } from './fizzbuzz.mjs';
 
 const implementations = [
   { name: 'Naive', fn: fizzBuzzNaive },
   { name: 'LCM', fn: fizzBuzzLCM },
   { name: 'Modulo', fn: fizzBuzzModulo },
-  { name: 'Preallocation', fn: fizzBuzzPreallocation },
-  { name: 'Tail Recursion + Trampolining', fn: fizzBuzzTailRecTrampolined },
-  { name: 'Loop Unrolling', fn: fizzBuzzUnrolled },
+  { name: 'Pre-allocated', fn: fizzBuzzPreallocated },
+  { name: 'Unrolled', fn: fizzBuzzUnrolled },
+  { name: 'Recursive', fn: fizzBuzzRecursive },
 ];
 
 for (const { name, fn } of implementations) {

@@ -15,7 +15,7 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "benchmark": "node --expose-gc bench.mjs",
+    "benchmark": "node bench.mjs",
     "test": "node --test fizzbuzz.test.mjs"
   },
   "dependencies": {

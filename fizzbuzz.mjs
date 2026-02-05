@@ -37,7 +37,7 @@ export const fizzBuzzModulo = (N) => {
 };
 
 // 4. Array Pre-allocation
-export const fizzBuzzPreallocation = (N) => {
+export const fizzBuzzPreallocated = (N) => {
   const arr = new Array(N);
   for (let i = 0; i < N; i++) {
     const num = i + 1;
@@ -50,30 +50,7 @@ export const fizzBuzzPreallocation = (N) => {
   return arr;
 };
 
-// 5. Tail Recursion + Trampolining
-const trampoline = (fn) => (...args) => {
-  let result = fn(...args);
-  while (typeof result === 'function') {
-    result = result();
-  }
-  return result;
-}
-
-const _fizzBuzzInternal = (n, current = 1, arr = new Array(n)) => {
-  if (current > n) return arr;
-
-  if (current % 3 == 0) {
-    if (current % 5 == 0) arr[current - 1] = "FizzBuzz";
-    else arr[current - 1] = "Fizz";
-  } else if (current % 5 == 0) arr[current - 1] = "Buzz";
-  else arr[current - 1] = current;
-
-  return () => _fizzBuzzInternal(n, current + 1, arr);
-}
-
-export const fizzBuzzTailRecTrampolined = trampoline(_fizzBuzzInternal);
-
-// 6. Loop Unrolling
+// 5. Loop Unrolling
 export const fizzBuzzUnrolled = (N) => {
   const arr = new Array(N);
   let i = 1;
@@ -95,3 +72,27 @@ export const fizzBuzzUnrolled = (N) => {
   }
   return arr;
 };
+
+// 6. Tail Recursion + Trampolining
+const trampoline = (fn) => (...args) => {
+  let result = fn(...args);
+  while (typeof result === 'function') {
+    result = result();
+  }
+  return result;
+}
+
+const _fizzBuzzInternal = (n, current = 1, arr = new Array(n)) => {
+  if (current > n) return arr;
+
+  if (current % 3 == 0) {
+    if (current % 5 == 0) arr[current - 1] = "FizzBuzz";
+    else arr[current - 1] = "Fizz";
+  } else if (current % 5 == 0) arr[current - 1] = "Buzz";
+  else arr[current - 1] = current;
+
+  return () => _fizzBuzzInternal(n, current + 1, arr);
+}
+
+export const fizzBuzzRecursive = trampoline(_fizzBuzzInternal);
+

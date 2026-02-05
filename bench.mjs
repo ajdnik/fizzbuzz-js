@@ -3,9 +3,9 @@ import {
   fizzBuzzNaive,
   fizzBuzzLCM,
   fizzBuzzModulo,
-  fizzBuzzPreallocation,
-  fizzBuzzTailRecTrampolined,
+  fizzBuzzPreallocated,
   fizzBuzzUnrolled,
+  fizzBuzzRecursive,
 } from './fizzbuzz.mjs';
 
 // Number of elements to process 
@@ -15,9 +15,9 @@ group('FizzBuzz Optimization Race', () => {
   bench('1. Naive Implementation', () => fizzBuzzNaive(N));
   bench('2. Least Common Multiple', () => fizzBuzzLCM(N));
   bench('3. Optimize Modulu Checks', () => fizzBuzzModulo(N));
-  bench('4. Array Pre-allocation', () => fizzBuzzPreallocation(N));
-  bench('5. Tail Recursion + Trampolining', () => fizzBuzzTailRecTrampolined(N));
-  bench('6. Loop Unrolling', () => fizzBuzzUnrolled(N));
+  bench('4. Array Pre-allocation', () => fizzBuzzPreallocated(N));
+  bench('5. Loop Unrolling', () => fizzBuzzUnrolled(N));
+  bench('6. Tail Recursion + Trampolining', () => fizzBuzzRecursive(N));
 });
 
 await run();
