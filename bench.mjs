@@ -1,10 +1,7 @@
 import { run, bench, group } from 'mitata';
 
-// Number of elements to process 
-const N = 10_000;
-
 // 1. Naive FizzBuzz Implementation
-const fizzBuzzNaive = () => {
+const fizzBuzzNaive = (N) => {
   const arr = [];
   for (let i = 1; i <= N; i++) {
     let output = '';
@@ -17,19 +14,7 @@ const fizzBuzzNaive = () => {
 };
 
 // 2. Least Common Multiple Check
-const fizzBuzzLCM = () => {
-  const arr = [];
-  for (let i = 1; i <= N; i++) {
-    if (i % 3 === 0) arr.push("Fizz");
-    else if (i % 5 === 0) arr.push("Buzz");
-    else if (i % 15 === 0) arr.push("FizzBuzz");
-    else arr.push(i);
-  }
-  return arr;
-};
-
-// 3. LCM With Ordering
-const fizzBuzzLCMOrdered = () => {
+const fizzBuzzLCM = (N) => {
   const arr = [];
   for (let i = 1; i <= N; i++) {
     if (i % 15 === 0) arr.push("FizzBuzz");
@@ -40,51 +25,61 @@ const fizzBuzzLCMOrdered = () => {
   return arr;
 };
 
-// 4. Optimize Modulo Checks
-const fizzBuzzModulo = () => {
+// 3. Optimize Modulo Checks
+const fizzBuzzModulo = (N) => {
   const arr = [];
   for (let i = 1; i <= N; i++) {
     if (i % 3 == 0) {
-      if (i % 5 == 0) {
-        arr.push("FizzBuzz");
-      } else {
-        arr.push("Fizz");
-      }
-    } else if (i % 5 == 0) {
-      arr.push("Buzz");
-    } else {
-      arr.push(i);
-    }
+      if (i % 5 == 0) arr.push("FizzBuzz");
+      else arr.push("Fizz");
+    } else if (i % 5 == 0) arr.push("Buzz");
+    else arr.push(i);
   }
   return arr;
 };
 
-// 5. Functional (Map)
-const fizzBuzzMap = () => {
-  return Array.from({ length: N }, (_, i) => {
+// 4. Pre-allocation
+const fizzBuzzPreallocation = (N) => {
+  const arr = new Array(N);
+  for (let i = 0; i < N; i++) {
     const num = i + 1;
-    if (i % 15 === 0) return "FizzBuzz";
-    else if (i % 3 === 0) return "Fizz";
-    else if (i % 5 === 0) return "Buzz";
+    if (num % 3 == 0) {
+      if (num % 5 == 0) arr[i] = "FizzBuzz";
+      else arr[i] = "Fizz";
+    } else if (num % 5 == 0) arr[i] = "Buzz";
+    else arr[i] = num;
+  }
+  return arr;
+};
+
+
+// 5. Pre-allocation + Map
+const fizzBuzzMap = (N) => {
+  return new Array(N).fill(0).map((_, i) => {
+    const num = i + 1;
+    if (num % 3 === 0) {
+      if (num % 5 === 0) return "FizzBuzz";
+      else return "Fizz";
+    } else if (num % 5 === 0) return "Buzz";
     return num;
   });
 };
 
-// 6. Tail Recussion
-const fizzBuzzTailRec = (n, current = 1, acc = []) => {
-  if (current > n) return acc;
+// 5. Tail Recussion
+const fizzBuzzTailRec = (n, current = 1, arr = new Array(n)) => {
+  if (current > n) return arr;
 
   let val;
-  if (current % 15 === 0) val = "FizzBuzz";
-  else if (current % 3 === 0) val = "Fizz";
-  else if (current % 5 === 0) val = "Buzz";
-  else val = current;
-  acc.push(val);
+  if (current % 3 == 0) {
+    if (current % 5 == 0) arr[current - 1] = "FizzBuzz";
+    else arr[current - 1] = "Fizz";
+  } else if (current % 5 == 0) arr[current - 1] = "Buzz";
+  else arr[current - 1] = current;
 
-  return fizzBuzzTailRec(n, current + 1, acc);
+  return fizzBuzzTailRec(n, current + 1, arr);
 }
 
-// 7. Tail Recursion + Trampolining
+// 6. Tail Recursion + Trampolining
 const trampoline = (fn) => (...args) => {
   let result = fn(...args);
   while (typeof result === 'function') {
@@ -93,23 +88,23 @@ const trampoline = (fn) => (...args) => {
   return result;
 }
 
-const _fizzBuzzInternal = (n, current = 1, acc = []) => {
-  if (current > n) return acc;
+const _fizzBuzzInternal = (n, current = 1, arr = new Array(n)) => {
+  if (current > n) return arr;
 
   let val;
-  if (current % 15 === 0) val = "FizzBuzz";
-  else if (current % 3 === 0) val = "Fizz";
-  else if (current % 5 === 0) val = "Buzz";
-  else val = current;
-  acc.push(val);
+  if (current % 3 == 0) {
+    if (current % 5 == 0) arr[current - 1] = "FizzBuzz";
+    else arr[current - 1] = "Fizz";
+  } else if (current % 5 == 0) arr[current - 1] = "Buzz";
+  else arr[current - 1] = current;
 
-  return () => _fizzBuzzInternal(n, current + 1, acc);
+  return () => _fizzBuzzInternal(n, current + 1, arr);
 }
 
 const fizzBuzzTailRecTrampolined = trampoline(_fizzBuzzInternal);
 
-// 8. Pattern Unrolling + Pre-allocation
-const fizzBuzzUnrolled = () => {
+// 7. Pattern Unrolling + Pre-allocation
+const fizzBuzzUnrolled = (N) => {
   const arr = new Array(N);
   let i = 1;
   while (i <= N - 15) {
@@ -131,15 +126,18 @@ const fizzBuzzUnrolled = () => {
   return arr;
 };
 
+// Number of elements to process 
+const N = 10_000;
+
 group('FizzBuzz Optimization Race', () => {
-  bench('Naive Implementation', () => fizzBuzzNaive());
-  bench('Least Common Multiple', () => fizzBuzzLCM());
-  bench('Least Common Multiple + Ordering', () => fizzBuzzLCMOrdered());
-  bench('Optimize Modulu Checks', () => fizzBuzzModulo());
-  bench('Functional (Map)', () => fizzBuzzMap());
+  bench('Naive Implementation', () => fizzBuzzNaive(N));
+  bench('Least Common Multiple', () => fizzBuzzLCM(N));
+  bench('Optimize Modulu Checks', () => fizzBuzzModulo(N));
+  bench('Pre-allocation', () => fizzBuzzPreallocation(N));
+  bench('Pre-allocation + Map', () => fizzBuzzMap(N));
   bench('Tail Recursion', () => fizzBuzzTailRec(N));
   bench('Tail Recursion + Trampolining', () => fizzBuzzTailRecTrampolined(N));
-  bench('Unrolled (Pre-alloc + Loop Unrolling)', () => fizzBuzzUnrolled());
+  bench('Unrolled (Pre-alloc + Loop Unrolling)', () => fizzBuzzUnrolled(N));
 });
 
 await run();
