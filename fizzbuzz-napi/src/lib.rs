@@ -2,7 +2,6 @@ use napi::*;
 use napi_derive::napi;
 use std::fmt::Write;
 
-/// Core FizzBuzz classification for a single number.
 #[derive(Debug, Clone, PartialEq)]
 enum FizzBuzzValue {
     Number(i32),
@@ -24,12 +23,11 @@ fn classify(n: i32) -> FizzBuzzValue {
     }
 }
 
-/// Computes FizzBuzz for 1..=n, returning a Vec of classified values.
 fn fizz_buzz_core(n: i32) -> Vec<FizzBuzzValue> {
     (1..=n).map(classify).collect()
 }
 
-// 1. Standard napi-rs approach: creates JS values per element
+// 1. Standard napi-rs approach
 #[napi]
 pub fn fizz_buzz_rust(env: Env, n: i32) -> Result<JsObject> {
     let n_usize = n as usize;
@@ -51,7 +49,7 @@ pub fn fizz_buzz_rust(env: Env, n: i32) -> Result<JsObject> {
     Ok(arr)
 }
 
-// 2. JSON serialization: single FFI call, JS parses with JSON.parse
+// 2. JSON serialization
 #[napi]
 pub fn fizz_buzz_rust_json(n: i32) -> String {
     let values = fizz_buzz_core(n);
@@ -77,8 +75,6 @@ pub fn fizz_buzz_rust_json(n: i32) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    // ── classify() ──────────────────────────────────────────────────
 
     #[test]
     fn classify_number() {
@@ -112,8 +108,6 @@ mod tests {
             );
         }
     }
-
-    // ── fizz_buzz_core() ────────────────────────────────────────────
 
     #[test]
     fn core_empty() {
@@ -204,8 +198,6 @@ mod tests {
         }
     }
 
-    // ── fizz_buzz_rust_json() ───────────────────────────────────────
-
     #[test]
     fn json_empty() {
         assert_eq!(fizz_buzz_rust_json(0), "[]");
@@ -250,10 +242,10 @@ mod tests {
     #[test]
     fn json_is_valid_structure() {
         let json = fizz_buzz_rust_json(100);
-        // Starts and ends correctly
+
         assert!(json.starts_with('['));
         assert!(json.ends_with(']'));
-        // Count elements by splitting on commas at the top level
+
         let inner = &json[1..json.len() - 1];
         let mut count = 0;
         let mut in_string = false;
@@ -263,12 +255,12 @@ mod tests {
                 ',' if !in_string => count += 1,
                 _ => {}
             }
-            // Ensure no unexpected whitespace
+
             if !in_string {
                 assert_ne!(ch, ' ', "unexpected space at position {i}");
             }
         }
-        // commas = elements - 1
+
         assert_eq!(count + 1, 100);
     }
 
