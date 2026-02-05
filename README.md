@@ -1,5 +1,7 @@
 # FizzBuzz Benchmark
 
+[![Benchmark](https://github.com/ajdnik/fizzbuzz-js/actions/workflows/benchmark.yml/badge.svg)](https://github.com/ajdnik/fizzbuzz-js/actions/workflows/benchmark.yml)
+
 Benchmarking different FizzBuzz implementations in JavaScript to compare performance characteristics of various optimization strategies.
 
 ## Implementations
@@ -8,12 +10,10 @@ Benchmarking different FizzBuzz implementations in JavaScript to compare perform
 |----------------|-------------|
 | **Naive** | Classic approach using string concatenation |
 | **Least Common Multiple** | Uses modulo checks for 3, 5, and 15 |
-| **LCM + Ordering** | LCM with optimized condition ordering (15 first) |
 | **Optimized Modulo** | Nested conditionals to minimize modulo operations |
-| **Functional (Map)** | Uses `Array.from` with mapping function |
-| **Tail Recursion** | Recursive implementation with accumulator |
+| **Array Pre-allocation** | Pre-allocated array with optimized modulo checks |
 | **Tail Recursion + Trampolining** | Avoids stack overflow with trampoline pattern |
-| **Unrolled** | Pre-allocated array with loop unrolling (15-iteration pattern) |
+| **Loop Unrolling** | Loop unrolling exploiting the 15-iteration FizzBuzz cycle |
 
 ## Requirements
 
@@ -33,10 +33,12 @@ Run the benchmark:
 npm run benchmark
 ```
 
+Run the tests:
+
+```bash
+npm test
+```
+
 ## CI
 
 This project includes a GitHub Actions workflow that runs benchmarks across multiple Node.js versions (18, 20, 22, 24, 25) and displays results in the Actions summary page.
-
-## License
-
-ISC
