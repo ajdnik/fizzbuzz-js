@@ -1,4 +1,5 @@
 import { run, bench, group } from 'mitata';
+import { createRequire } from 'node:module';
 import {
   fizzBuzzNaive,
   fizzBuzzLCM,
@@ -8,6 +9,9 @@ import {
   fizzBuzzRecursive,
   fizzBuzzDSL,
 } from './fizzbuzz.mjs';
+
+const require = createRequire(import.meta.url);
+const { fizzBuzzRust, fizzBuzzRustJson } = require('./fizzbuzz_napi.node');
 
 // Number of elements to process 
 const N = 10_000;
@@ -20,6 +24,8 @@ group('FizzBuzz Optimization Race', () => {
   bench('5. Loop Unrolling', () => fizzBuzzUnrolled(N));
   bench('6. Tail Recursion + Trampolining', () => fizzBuzzRecursive(N));
   bench('7. Domain-Specific Language', () => fizzBuzzDSL(N));
+  bench('8. Rust napi-rs', () => fizzBuzzRust(N));
+  bench('9. Rust napi-rs (JSON.parse)', () => JSON.parse(fizzBuzzRustJson(N)));
 });
 
 await run();

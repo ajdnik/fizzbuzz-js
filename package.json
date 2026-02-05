@@ -15,10 +15,18 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "benchmark": "node bench.mjs",
-    "test": "node --test fizzbuzz.test.mjs"
+    "build:rust": "napi build --manifest-path fizzbuzz-napi/Cargo.toml --release --no-js --no-dts-header -o .",
+    "benchmark": "npm run build:rust && node bench.mjs",
+    "test": "node --test fizzbuzz.test.mjs",
+    "test:rust": "cargo test --manifest-path fizzbuzz-napi/Cargo.toml"
+  },
+  "napi": {
+    "binaryName": "fizzbuzz_napi"
   },
   "dependencies": {
     "mitata": "^1.0.34"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^3.5.1"
   }
 }

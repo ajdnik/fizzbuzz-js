@@ -16,6 +16,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: fizzbuzz-napi
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
@@ -24,6 +32,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Build Rust napi addon
+        run: npx napi build --manifest-path fizzbuzz-napi/Cargo.toml --release --no-js --no-dts-header -o .
 
       - name: Run benchmark
         run: |
@@ -43,11 +54,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: fizzbuzz-napi
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
         run: bun install
+
+      - name: Build Rust napi addon
+        run: bunx napi build --manifest-path fizzbuzz-napi/Cargo.toml --release --no-js --no-dts-header -o .
 
       - name: Run benchmark
         run: |
@@ -67,16 +89,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: fizzbuzz-napi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'npm'
+
       - name: Setup Deno
         uses: denoland/setup-deno@v2
 
       - name: Install dependencies
-        run: deno install --node-modules-dir=auto
+        run: npm ci
+
+      - name: Build Rust napi addon
+        run: npx napi build --manifest-path fizzbuzz-napi/Cargo.toml --release --no-js --no-dts-header -o .
 
       - name: Run benchmark
         run: |
           echo "Running benchmark on Deno $(deno --version | head -1)"
-          deno run --node-modules-dir=auto --allow-read --allow-env bench.mjs 2>&1 | tee benchmark-output.txt
+          deno run --node-modules-dir=auto --allow-read --allow-env --allow-ffi bench.mjs 2>&1 | tee benchmark-output.txt
 
       - name: Upload benchmark results
         uses: actions/upload-artifact@v4
