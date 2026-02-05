@@ -15,7 +15,8 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "benchmark": "node bench.mjs"
+    "benchmark": "node --expose-gc bench.mjs",
+    "test": "node --test fizzbuzz.test.mjs"
   },
   "dependencies": {
     "mitata": "^1.0.34"
