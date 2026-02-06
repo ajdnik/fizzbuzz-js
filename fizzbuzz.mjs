@@ -100,15 +100,15 @@ export const fizzBuzzRecursive = trampoline(_fizzBuzzInternal);
 // The Identity (End of chain)
 const identity = (n, v) => v;
 
-// The Context
-const check = (d, s) => (cont) => (n, v) => {
+// The Rule
+const rule = (d, s) => (cont) => (n, v) => {
   if (n % d === 0) return s + cont(n, "");
   return cont(n, v);
 };
 
 // The Composition 
-const program = check(3, "Fizz")(
-                  check(5, "Buzz")(
+const program = rule(3, "Fizz")(
+                  rule(5, "Buzz")(
                     identity
                   )
                 );

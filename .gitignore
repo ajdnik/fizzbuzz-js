@@ -133,3 +133,6 @@ dist
 fizzbuzz-napi/target/
 *.node
 index.d.ts
+
+# MacOS
+.DS_Store

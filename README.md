@@ -55,6 +55,18 @@ Run the Rust tests:
 npm run test:rust
 ```
 
+## Profiling
+
+You can profile individual JavaScript FizzBuzz implementations using V8's optimization tracing flags. This is useful for inspecting which functions get optimized or deoptimized by the V8 JIT compiler.
+
+```bash
+npm run profile:opt <functionName>
+```
+
+Available functions: `fizzBuzzNaive`, `fizzBuzzLCM`, `fizzBuzzModulo`, `fizzBuzzPreallocated`, `fizzBuzzUnrolled`, `fizzBuzzRecursive`, `fizzBuzzDSL`.
+
+The script runs the selected function 100,000 times with N=10,000 while `--trace-opt` and `--trace-deopt` print V8's optimization and deoptimization decisions to stderr.
+
 ## CI
 
 This project includes a GitHub Actions workflow that runs benchmarks across multiple runtimes:

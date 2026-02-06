@@ -16,8 +16,9 @@
   "main": "index.js",
   "scripts": {
     "build:rust": "napi build --manifest-path fizzbuzz-napi/Cargo.toml --release --no-js --no-dts-header -o .",
-    "benchmark": "npm run build:rust && node bench.mjs",
+    "benchmark": "npm run build:rust && node --expose-gc bench.mjs",
     "test": "node --test fizzbuzz.test.mjs",
+    "profile:opt": "node --trace-opt --trace-deopt profile.mjs",
     "test:rust": "cargo test --manifest-path fizzbuzz-napi/Cargo.toml"
   },
   "napi": {
